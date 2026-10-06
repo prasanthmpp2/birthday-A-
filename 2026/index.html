@@ -1,0 +1,230 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#080808" />
+    <link rel="icon" href="data:," />
+    <meta name="description" content="Another year. Another page." />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="CHAPTER TWO — 2026" />
+    <meta property="og:description" content="Another year. Another page." />
+    <title>CHAPTER TWO — 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="song-lyrics.js" defer></script>
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <p class="privacy-reminder" role="note">Please keep this personal — no screenshots or screen recordings.</p>
+
+    <section class="auth-gate" id="auth-gate" aria-labelledby="auth-title">
+      <div class="auth-card">
+        <p class="auth-eyebrow">A PERSONAL BIRTHDAY CHAPTER</p>
+        <p class="auth-year">2026 · 02</p>
+        <h1 id="auth-title">Before the next page.</h1>
+        <p class="auth-description">Sign in with Google to enter this year's birthday experience.</p>
+        <button class="google-sign-in" id="google-sign-in" type="button" disabled>
+          <span class="google-mark" aria-hidden="true">G</span>
+          <span>Continue with Google</span>
+          <span class="google-arrow" aria-hidden="true">→</span>
+        </button>
+        <p class="auth-status" id="auth-status" role="status" aria-live="polite">Preparing Google sign-in…</p>
+        <p class="auth-footnote">Your sign-in lets you continue into the chapter.</p>
+      </div>
+      <span class="auth-edition" aria-hidden="true">CHAPTER TWO &nbsp; / &nbsp; 2026</span>
+    </section>
+
+    <main class="site-shell" id="birthday-site" hidden>
+      <button class="auth-signout" id="auth-signout" type="button" hidden>Sign out</button>
+      <section class="scene scene--opening is-active" id="opening" aria-labelledby="opening-title">
+        <div class="scene-content">
+          <p class="eyebrow opening-title" id="opening-title">CHAPTER TWO</p>
+          <p class="year opening-year">2026</p>
+          <p class="scene-note opening-note">Another year. Another page.</p>
+          <p class="opening-today" id="opening-today" hidden>Today.</p>
+          <button class="text-button opening-enter" type="button" data-go="chapter-one">
+            ENTER <span aria-hidden="true">→</span>
+          </button>
+        </div>
+        <button class="corner-index" type="button" data-secret-trigger aria-label="Chapter 02, 2026">02 / 26</button>
+      </section>
+
+      <section class="scene" id="chapter-one" aria-labelledby="chapter-one-title" aria-hidden="true">
+        <div class="scene-content">
+          <p class="eyebrow" id="chapter-one-title">CHAPTER ONE</p>
+          <p class="year">2025</p>
+          <p class="scene-note">Before this chapter...</p>
+          <div class="chapter-divider chapter-divider--short" aria-hidden="true"></div>
+          <p class="memory-note">A year worth remembering.</p>
+          <div class="actions">
+            <button class="text-button chapter-one-primary" type="button" data-go="chapter-two">
+              CONTINUE TO 2026 <span aria-hidden="true">→</span>
+            </button>
+            <a class="text-button chapter-one-revisit" id="revisit-link" href="#chapter-one" target="_blank" rel="noopener noreferrer">
+              REVISIT LAST YEAR <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+          <p class="link-hint" id="link-hint" aria-live="polite">The 2025 birthday opens in a new tab.</p>
+        </div>
+        <span class="corner-index" aria-hidden="true">01 / 25</span>
+      </section>
+
+      <section class="scene" id="chapter-two" aria-labelledby="chapter-two-title" aria-hidden="true">
+        <div class="scene-content">
+          <p class="eyebrow" id="chapter-two-title">CHAPTER TWO</p>
+          <p class="year">2026</p>
+          <p class="scene-note">This chapter starts here.</p>
+          <button class="text-button chapter-two-continue" type="button" data-go="birthday-reveal">
+            CONTINUE <span aria-hidden="true">→</span>
+          </button>
+        </div>
+        <button class="corner-index" type="button" data-secret-trigger aria-label="Chapter 02, 2026">02 / 26</button>
+      </section>
+
+      <section class="scene" id="birthday-reveal" aria-labelledby="birthday-title" aria-hidden="true">
+        <div class="scene-content birthday-content">
+          <p class="eyebrow birthday-eyebrow" id="birthday-title">CHAPTER TWO</p>
+          <p class="year birthday-year">2026</p>
+          <p class="scene-note birthday-dayline">Today is your day.</p>
+          <h1 class="birthday-heading">HAPPY BIRTHDAY</h1>
+          <p class="birthday-date" id="birthday-date" hidden></p>
+          <p class="birthday-name" data-personal-name hidden></p>
+          <button class="text-button birthday-next" type="button" data-go="birthday-message">
+            CONTINUE <span aria-hidden="true">→</span>
+          </button>
+        </div>
+        <button class="corner-index" type="button" data-secret-trigger aria-label="Chapter 02, 2026">02 / 26</button>
+      </section>
+
+      <section class="scene" id="birthday-message" aria-labelledby="message-title" aria-hidden="true">
+        <div class="scene-content reading-content">
+          <p class="eyebrow" id="message-title">A BIRTHDAY MESSAGE</p>
+          <div class="letter-copy">
+            <p>Last year, I made you a website.</p>
+            <p>This year, I didn't want to start from zero.</p>
+            <p>So...<br />I just added another chapter.</p>
+            <p>Hope this year brings you<br />a lot of good days,<br />good people,<br />good memories,<br />and reasons to smile.</p>
+            <p>Happy Birthday.</p>
+          </div>
+          <button class="text-button reading-next" type="button" data-go="personal-note">
+            CONTINUE <span aria-hidden="true">→</span>
+          </button>
+        </div>
+        <button class="corner-index" type="button" data-secret-trigger aria-label="Chapter 02, 2026">02 / 26</button>
+      </section>
+
+      <section class="scene" id="personal-note" aria-labelledby="personal-note-title" aria-hidden="true">
+        <div class="scene-content reading-content personal-note-content">
+          <h2 class="note-heading" id="personal-note-title">A small note.</h2>
+          <div class="letter-copy personal-copy">
+            <p>Three years can sound like a long time.</p>
+            <p>But when you look back,<br />it is usually the small conversations,<br />random laughs,<br />ordinary days,<br />and little moments<br />that stay with you.</p>
+            <p>I'm glad our paths crossed.</p>
+            <p>That's all.</p>
+          </div>
+          <button class="text-button reading-next" type="button" data-go="song-scene">
+            CONTINUE <span aria-hidden="true">→</span>
+          </button>
+        </div>
+        <button class="corner-index" type="button" data-secret-trigger aria-label="Chapter 02, 2026">02 / 26</button>
+      </section>
+
+      <section class="scene song-scene" id="song-scene" aria-labelledby="song-kicker" aria-hidden="true">
+        <div class="scene-content song-content">
+          <p class="song-chapter-marker">CHAPTER TWO — 2026</p>
+          <p class="eyebrow song-kicker" id="song-kicker">ONE MORE THING...</p>
+          <p class="song-intro">I made something for you.</p>
+          <p class="song-support">Just listen.</p>
+          <p class="song-title" data-song-title></p>
+          <div class="song-lyrics" id="song-lyrics" aria-label="Synchronized song lyrics">
+            <p class="song-lyric song-lyric--previous" id="song-lyric-previous" aria-hidden="true"></p>
+            <p class="song-lyric song-lyric--current" id="song-lyric-current" aria-live="polite" aria-atomic="true"></p>
+            <p class="song-lyric song-lyric--next" id="song-lyric-next" aria-hidden="true"></p>
+          </div>
+          <p class="song-section" id="song-section" aria-live="polite" aria-atomic="true" hidden></p>
+          <p class="song-status" id="song-status" role="status" aria-live="polite" hidden>
+            <span class="song-status-dot" aria-hidden="true"></span>
+            <span id="song-status-text"></span>
+          </p>
+
+          <div class="song-player">
+            <button class="song-play" id="song-play" type="button" aria-label="Play song" aria-pressed="false">
+              <span aria-hidden="true">▶</span>
+            </button>
+            <div class="audio-controls" id="audio-controls" role="group" aria-label="Song controls">
+              <label class="seek-control">
+                <span class="visually-hidden">Seek through song</span>
+                <input id="song-progress" type="range" min="0" max="1000" value="0" step="1" aria-label="Seek through song" disabled />
+              </label>
+              <div class="audio-meta">
+                <span id="song-current-time">00:00</span>
+                <span id="song-duration">00:00</span>
+              </div>
+              <label class="volume-control">
+                <span>VOLUME</span>
+                <input id="song-volume" type="range" min="0" max="1" value="0.8" step="0.01" aria-label="Song volume" />
+              </label>
+            </div>
+          </div>
+
+          <p class="song-error" id="song-error" role="alert" hidden>
+            <span>The song couldn't be loaded.</span>
+            <span>Please try again.</span>
+            <button class="text-button song-retry" id="song-retry" type="button">TRY AGAIN <span aria-hidden="true">↻</span></button>
+          </p>
+
+          <div class="song-after" id="song-after" aria-live="polite" aria-atomic="true">
+            <p id="completion-first" hidden>Thanks for listening.</p>
+            <p id="completion-second" hidden>That's all I wanted to share.</p>
+            <p class="song-credit" id="song-credit" hidden><span>Written by</span><span>Prasanth M P</span></p>
+          </div>
+
+          <button class="text-button song-continue" type="button" data-go="chapter-three-final" hidden>
+            CONTINUE <span aria-hidden="true">→</span>
+          </button>
+          <audio id="song-audio" preload="none"></audio>
+        </div>
+        <button class="corner-index" type="button" data-secret-trigger aria-label="Chapter 02, 2026">02 / 26</button>
+      </section>
+
+      <section class="scene final-scene" id="chapter-three-final" aria-labelledby="final-chapter-title" aria-hidden="true">
+        <div class="final-content" id="final-content">
+          <div class="final-main" id="final-main">
+            <p class="final-number">03</p>
+            <p class="eyebrow final-chapter" id="final-chapter-title">CHAPTER THREE</p>
+            <p class="final-status">NOT WRITTEN YET.</p>
+            <p class="final-best-part">Maybe that's the best part.</p>
+
+            <div class="final-thoughts">
+              <p class="final-line final-line-one">Three years became a chapter.</p>
+              <p class="final-line final-line-two">Today became another page.</p>
+              <p class="final-line final-line-three">Whatever comes next...</p>
+              <p class="final-line final-line-four">...we'll find out.</p>
+            </div>
+
+            <div class="final-wish">
+              <p class="final-until">Until then...</p>
+              <p class="final-keep">Keep smiling.<br />Keep growing.<br />Keep being you.</p>
+              <p class="final-birthday">HAPPY BIRTHDAY<span class="final-name-wrap" hidden>, <span data-final-name></span></span></p>
+            </div>
+
+            <p class="final-personal">See you somewhere in the next chapter. &#x1F90D;</p>
+            <button class="text-button final-replay-early" type="button" data-restart hidden>REPLAY FROM BEGINNING <span aria-hidden="true">→</span></button>
+          </div>
+
+          <div class="final-remnant" id="final-remnant" aria-hidden="true" hidden>
+            <p class="remnant-chapter">CHAPTER 03</p>
+            <p class="remnant-ellipsis" aria-hidden="true">...</p>
+            <p class="remnant-status">Not written yet.</p>
+            <button class="text-button final-replay" type="button" data-restart hidden>REPLAY FROM BEGINNING <span aria-hidden="true">→</span></button>
+          </div>
+        </div>
+      </section>
+      <p class="secret-note" id="secret-note" role="status" aria-live="polite" hidden>You found a little extra.<br />That's all. :)</p>
+    </main>
+    <script type="module" src="auth-gate.js"></script>
+  </body>
+</html>

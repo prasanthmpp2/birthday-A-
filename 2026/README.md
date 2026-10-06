@@ -1,0 +1,71 @@
+# Chapter Two — 2026
+
+A small continuation of the previous year's birthday website. The site is built with plain HTML, CSS, and JavaScript so it can be hosted as a static website.
+
+## Technologies
+
+HTML, CSS, and vanilla JavaScript. Google sign-in uses the Firebase Authentication browser SDK from Google's CDN, so sign-in requires an internet connection.
+
+## Files
+
+```text
+index.html
+style.css
+script.js
+auth-gate.js
+song-lyrics.js
+assets/song.aac
+```
+
+There are no image assets. The song is loaded locally by the browser; it does not autoplay.
+
+## Enable Google sign-in
+
+The 2026 experience starts behind a Google sign-in screen. `auth-gate.js` uses the Firebase web app configuration supplied for this project; Analytics is not initialized.
+
+1. In the Firebase console, open **Authentication → Sign-in method** and enable **Google**.
+2. In **Authentication → Settings → Authorized domains**, add `127.0.0.1` for local testing and the production website's domain before publishing.
+3. Serve this folder over HTTP and open the 2026 site. Desktop browsers use Google's popup flow; touch devices use redirect sign-in.
+
+Any Google account that can complete sign-in is currently allowed into the experience. The login screen is a client-side entry gate, not full file protection: this static site's HTML, JavaScript, and song file can still be requested directly. To restrict access to the media itself, move it to Cloud Storage for Firebase and add server-enforced Storage Security Rules.
+
+## Before publishing
+
+The `CONFIG` object in `script.js` is currently set up for Abinaya:
+
+- `HER_NAME`: `Abinaya`.
+- `BIRTHDAY_DATE`: `09 October`.
+- `PREVIOUS_YEAR_WEBSITE_URL`: `../2025/index.html` when the production 2025 build is available beside this site on the same host. Use the published 2025 URL when deploying the years separately.
+- `PREVIOUS_YEAR_LOCAL_URL`: local 2025 Vite site at `http://127.0.0.1:8080/`.
+- `SONG_URL`: currently `assets/song.aac`.
+- `SONG_TITLE`: change this only if the song title is different.
+- `song-lyrics.js`: line start/end cues grouped from the supplied word-level JSON, with the project's existing lyric text and section labels.
+- `LYRICS_CONFIG.vocalStartOffset`: currently `20.35` seconds, taken from the first timed word. The player subtracts it from `audio.currentTime` before comparing against the vocal-relative lyric cues.
+
+The project contains `assets/song.aac` (ADTS AAC-LC, 48 kHz, stereo); it does not contain the `song.mp3` named in the timing brief. Its AAC frame headers represent about 252.05 seconds of audio. The browser's loaded `audio.duration` is authoritative. If loading fails or duration metadata is invalid, the page shows a retry message and lets the visitor continue.
+
+The supplied word-level JSON was grouped into 78 line cues. Playback, pause, and seeking use `audio.currentTime` as the source timeline; the 20.35-second offset maps it to the cue file's vocal-relative timeline.
+
+GitHub Pages sites are publicly available on the internet. Only add personal details and audio that are intended to be shared with anyone who has the site link.
+
+## Publish both years with GitHub Pages
+
+The repository is designed to keep `2025/` and `2026/` as sibling folders. The workflow at `.github/workflows/deploy-pages.yml` builds the React/Vite 2025 app, copies both sites into one Pages artifact, and deploys it on every push to `main` or `master` (or when started manually).
+
+1. Push this project structure to a GitHub repository, keeping both year folders and `.github/workflows/deploy-pages.yml` at the repository root.
+2. In the repository, open **Settings → Pages** and set **Build and deployment → Source** to **GitHub Actions**.
+3. Open **Actions**, select **Build and deploy birthday sites**, and run it if it has not started from a push. Wait for both jobs to succeed.
+4. Open the Pages URL from the deployment summary. The root URL redirects to 2026; the 2025 revisit link opens the sibling 2025 build.
+5. In Firebase Authentication, add the Pages hostname (for example, `owner.github.io`) under **Settings → Authorized domains**. Google sign-in also needs the Google provider enabled.
+
+The generated URLs are `<Pages URL>/2026/` and `<Pages URL>/2025/`. The 2025 app's Vite assets and React Router base are configured for that repository path; local Vite development still uses `/` on port 8080. Keep `PREVIOUS_YEAR_WEBSITE_URL` as `../2025/index.html` when both sites are published together.
+
+GitHub Pages sites are public. Only publish personal details and audio that are meant to be available to anyone with the link. See GitHub's [custom workflow guide for Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
+
+## Before sharing
+
+- Confirm the name and birthday date are correct.
+- Confirm Google sign-in works on the published domain and the previous-year URL opens the intended 2025 website in a separate tab.
+- Confirm the song file is the intended version and plays, pauses, seeks, and reaches its ending message.
+- Test the published site at mobile and desktop sizes, including the replay button and reduced-motion setting.
+- Check that the generated Pages URL loads directly and after a refresh.

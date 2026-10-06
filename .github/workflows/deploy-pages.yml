@@ -1,0 +1,80 @@
+name: Build and deploy birthday sites
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: 2025/package-lock.json
+
+      - name: Install 2025 dependencies
+        working-directory: 2025
+        run: npm ci
+
+      - name: Build 2025 app
+        working-directory: 2025
+        run: npm run build
+
+      - name: Assemble both sites
+        shell: bash
+        run: |
+          mkdir -p _site/2025 _site/2026
+          cp -R 2025/dist/. _site/2025/
+          cp -R 2026/. _site/2026/
+          cat > _site/index.html <<'EOF'
+          <!doctype html>
+          <html lang="en">
+            <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1">
+              <meta http-equiv="refresh" content="0; url=./2026/">
+              <title>Chapter Two — 2026</title>
+            </head>
+            <body>
+              <p>Opening Chapter Two — 2026… <a href="./2026/">Continue</a></p>
+            </body>
+          </html>
+          EOF
+          touch _site/.nojekyll
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      actions: read
+      pages: write
+      id-token: write
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
