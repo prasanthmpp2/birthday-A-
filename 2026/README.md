@@ -35,7 +35,7 @@ The `CONFIG` object in `script.js` is currently set up for Abinaya:
 
 - `HER_NAME`: `Abinaya`.
 - `BIRTHDAY_DATE`: `09 October`.
-- `PREVIOUS_YEAR_WEBSITE_URL`: `../2025/index.html` when the production 2025 build is available beside this site on the same host. Use the published 2025 URL when deploying the years separately.
+- `PREVIOUS_YEAR_WEBSITE_URL`: `../2025/` when the production 2025 build is available beside this site on the same host. Use the published 2025 URL when deploying the years separately.
 - `PREVIOUS_YEAR_LOCAL_URL`: local 2025 Vite site at `http://127.0.0.1:8080/`.
 - `SONG_URL`: currently `assets/song.aac`.
 - `SONG_TITLE`: change this only if the song title is different.
@@ -58,7 +58,7 @@ The repository is designed to keep `2025/` and `2026/` as sibling folders. The w
 4. Open the Pages URL from the deployment summary. The root URL redirects to 2026; the 2025 revisit link opens the sibling 2025 build.
 5. In Firebase Authentication, add the Pages hostname (for example, `owner.github.io`) under **Settings → Authorized domains**. Google sign-in also needs the Google provider enabled.
 
-The generated URLs are `<Pages URL>/2026/` and `<Pages URL>/2025/`. The 2025 app's Vite assets and React Router base are configured for that repository path; local Vite development still uses `/` on port 8080. Keep `PREVIOUS_YEAR_WEBSITE_URL` as `../2025/index.html` when both sites are published together.
+The generated URLs are `<Pages URL>/2026/` and `<Pages URL>/2025/`. The 2025 app's Vite assets and React Router base are configured for that repository path; local Vite development still uses `/` on port 8080. Keep `PREVIOUS_YEAR_WEBSITE_URL` as `../2025/` when both sites are published together. The legacy `/2025/index.html` URL redirects to the canonical 2025 home page.
 
 GitHub Pages sites are public. Only publish personal details and audio that are meant to be available to anyone with the link. See GitHub's [custom workflow guide for Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
 

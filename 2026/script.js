@@ -2,7 +2,7 @@
 const CONFIG = {
   HER_NAME: "Abinaya",
   BIRTHDAY_DATE: "09 October",
-  PREVIOUS_YEAR_WEBSITE_URL: "../2025/index.html",
+  PREVIOUS_YEAR_WEBSITE_URL: "../2025/",
   PREVIOUS_YEAR_LOCAL_URL: "http://127.0.0.1:8080/",
   SONG_URL: "assets/song.aac",
   SONG_TITLE: "Pesama Pesura Paarvaiyile",
