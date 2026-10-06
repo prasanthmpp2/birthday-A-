@@ -45,8 +45,11 @@
           <p class="year opening-year">2026</p>
           <p class="scene-note opening-note">Another year. Another page.</p>
           <p class="opening-today" id="opening-today" hidden>Today.</p>
-          <button class="text-button opening-enter" type="button" data-go="chapter-one">
+          <button class="text-button opening-enter" type="button" data-next>
             ENTER <span aria-hidden="true">→</span>
+          </button>
+          <button class="text-button archive-button opening-archive" type="button" data-archive>
+            CHAPTER ONE / 2025 <span aria-hidden="true">↗</span>
           </button>
         </div>
         <button class="corner-index" type="button" data-secret-trigger aria-label="Chapter 02, 2026">02 / 26</button>
@@ -60,8 +63,8 @@
           <div class="chapter-divider chapter-divider--short" aria-hidden="true"></div>
           <p class="memory-note">A year worth remembering.</p>
           <div class="actions">
-            <button class="text-button chapter-one-primary" type="button" data-go="chapter-two">
-              CONTINUE TO 2026 <span aria-hidden="true">→</span>
+            <button class="text-button chapter-one-primary" type="button" data-previous>
+              BACK TO CHAPTER TWO <span aria-hidden="true">→</span>
             </button>
             <a class="text-button chapter-one-revisit" id="revisit-link" href="#chapter-one" target="_blank" rel="noopener noreferrer">
               REVISIT LAST YEAR <span aria-hidden="true">↗</span>
@@ -72,18 +75,6 @@
         <span class="corner-index" aria-hidden="true">01 / 25</span>
       </section>
 
-      <section class="scene" id="chapter-two" aria-labelledby="chapter-two-title" aria-hidden="true">
-        <div class="scene-content">
-          <p class="eyebrow" id="chapter-two-title">CHAPTER TWO</p>
-          <p class="year">2026</p>
-          <p class="scene-note">This chapter starts here.</p>
-          <button class="text-button chapter-two-continue" type="button" data-go="birthday-reveal">
-            CONTINUE <span aria-hidden="true">→</span>
-          </button>
-        </div>
-        <button class="corner-index" type="button" data-secret-trigger aria-label="Chapter 02, 2026">02 / 26</button>
-      </section>
-
       <section class="scene" id="birthday-reveal" aria-labelledby="birthday-title" aria-hidden="true">
         <div class="scene-content birthday-content">
           <p class="eyebrow birthday-eyebrow" id="birthday-title">CHAPTER TWO</p>
@@ -92,10 +83,11 @@
           <h1 class="birthday-heading">HAPPY BIRTHDAY</h1>
           <p class="birthday-date" id="birthday-date" hidden></p>
           <p class="birthday-name" data-personal-name hidden></p>
-          <button class="text-button birthday-next" type="button" data-go="birthday-message">
+          <button class="text-button birthday-next" type="button" data-next>
             CONTINUE <span aria-hidden="true">→</span>
           </button>
         </div>
+        <button class="text-button scene-back" type="button" data-previous>BACK</button>
         <button class="corner-index" type="button" data-secret-trigger aria-label="Chapter 02, 2026">02 / 26</button>
       </section>
 
@@ -109,10 +101,11 @@
             <p>Hope this year brings you<br />a lot of good days,<br />good people,<br />good memories,<br />and reasons to smile.</p>
             <p>Happy Birthday.</p>
           </div>
-          <button class="text-button reading-next" type="button" data-go="personal-note">
+          <button class="text-button reading-next" type="button" data-next>
             CONTINUE <span aria-hidden="true">→</span>
           </button>
         </div>
+        <button class="text-button scene-back" type="button" data-previous>BACK</button>
         <button class="corner-index" type="button" data-secret-trigger aria-label="Chapter 02, 2026">02 / 26</button>
       </section>
 
@@ -125,10 +118,11 @@
             <p>I'm glad our paths crossed.</p>
             <p>That's all.</p>
           </div>
-          <button class="text-button reading-next" type="button" data-go="song-scene">
+          <button class="text-button reading-next" type="button" data-next>
             CONTINUE <span aria-hidden="true">→</span>
           </button>
         </div>
+        <button class="text-button scene-back" type="button" data-previous>BACK</button>
         <button class="corner-index" type="button" data-secret-trigger aria-label="Chapter 02, 2026">02 / 26</button>
       </section>
 
@@ -178,15 +172,15 @@
 
           <div class="song-after" id="song-after" aria-live="polite" aria-atomic="true">
             <p id="completion-first" hidden>Thanks for listening.</p>
-            <p id="completion-second" hidden>That's all I wanted to share.</p>
             <p class="song-credit" id="song-credit" hidden><span>Written by</span><span>Prasanth M P</span></p>
           </div>
 
-          <button class="text-button song-continue" type="button" data-go="chapter-three-final" hidden>
+          <button class="text-button song-continue" type="button" data-next hidden>
             CONTINUE <span aria-hidden="true">→</span>
           </button>
           <audio id="song-audio" preload="none"></audio>
         </div>
+        <button class="text-button scene-back" type="button" data-previous>BACK</button>
         <button class="corner-index" type="button" data-secret-trigger aria-label="Chapter 02, 2026">02 / 26</button>
       </section>
 
@@ -221,6 +215,7 @@
             <p class="remnant-status">Not written yet.</p>
             <button class="text-button final-replay" type="button" data-restart hidden>REPLAY FROM BEGINNING <span aria-hidden="true">→</span></button>
           </div>
+          <button class="text-button scene-back" type="button" data-previous>BACK</button>
         </div>
       </section>
       <p class="secret-note" id="secret-note" role="status" aria-live="polite" hidden>You found a little extra.<br />That's all. :)</p>

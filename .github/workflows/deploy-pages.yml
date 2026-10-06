@@ -46,11 +46,11 @@ jobs:
             <head>
               <meta charset="utf-8">
               <meta name="viewport" content="width=device-width, initial-scale=1">
-              <meta http-equiv="refresh" content="0; url=./2026/">
               <title>Chapter Two — 2026</title>
             </head>
             <body>
-              <p>Opening Chapter Two — 2026… <a href="./2026/">Continue</a></p>
+              <script>window.location.replace("./2026/#opening");</script>
+              <p>Opening Chapter Two — 2026… <a href="./2026/#opening">Continue</a></p>
             </body>
           </html>
           EOF

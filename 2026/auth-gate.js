@@ -112,6 +112,7 @@ async function initializeFirebaseAuth() {
       signOutButton.disabled = true;
       try {
         await signOut(firebaseAuth);
+        window.dispatchEvent(new Event("birthday-session-reset"));
       } catch {
         setStatus("Couldn't sign out. Please try again.", true);
       } finally {

@@ -19,6 +19,14 @@ assets/song.aac
 
 There are no image assets. The song is loaded locally by the browser; it does not autoplay.
 
+## Navigation architecture
+
+The 2026 experience is a single-page scene app. `script.js` owns the scene map and navigation transitions; `#scene-id` in the URL records the current scene so refresh and browser Back/Forward restore the right point. The normal path is the Chapter Two opening → birthday reveal → birthday message → personal note → song → Chapter Three. Chapter One is an optional archive preview from the opening, and its return button goes back to the opening.
+
+Continue and Back buttons use the central scene map. Invalid scene hashes log a developer error and fall back to the opening scene. Firebase Authentication only gates access; signing out intentionally resets the in-session route to the opening. The 2025 app is a separate React single-page experience, with its steps held in component state.
+
+The original 2026 transitions already changed visible scenes in place; they did not link to `index.html`. The reset behavior came from having no URL/history state, which caused every refresh to reinitialize the hard-coded opening scene. A duplicate 2026 intro also forced an unnecessary stop after the opening; the archive is now optional and the main flow proceeds directly to the birthday reveal. Replay is the only intentional full-journey reset. The song lyric timeline remains based on the audio's `currentTime` plus the configured vocal offset. Firebase Firestore visit/session analytics are not currently implemented.
+
 ## Enable Google sign-in
 
 The 2026 experience starts behind a Google sign-in screen. `auth-gate.js` uses the Firebase web app configuration supplied for this project; Analytics is not initialized.

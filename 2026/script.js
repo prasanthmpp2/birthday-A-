@@ -13,6 +13,20 @@ const LYRICS_CONFIG = {
 };
 
 const scenes = [...document.querySelectorAll(".scene")];
+// The scenes were previously only CSS visibility toggles, so refresh always
+// restored the hard-coded opening scene and browser Back/Forward had no route
+// state. Continue clicks themselves did not navigate to index.html; replay was
+// the only intentional reset. Keep this map as the single journey definition.
+const SCENE_FLOW = Object.freeze({
+  opening: { next: "birthday-reveal", archive: "chapter-one" },
+  "chapter-one": { previous: "opening" },
+  "birthday-reveal": { previous: "opening", next: "birthday-message" },
+  "birthday-message": { previous: "birthday-reveal", next: "personal-note" },
+  "personal-note": { previous: "birthday-message", next: "song-scene" },
+  "song-scene": { previous: "personal-note", next: "chapter-three-final" },
+  "chapter-three-final": { previous: "song-scene" },
+});
+const sceneIds = new Set(scenes.map((scene) => scene.id));
 const revisitLink = document.querySelector("#revisit-link");
 const linkHint = document.querySelector("#link-hint");
 const personalName = document.querySelector("[data-personal-name]");
@@ -36,7 +50,6 @@ const songLyricNext = document.querySelector("#song-lyric-next");
 const songSection = document.querySelector("#song-section");
 const songContinue = document.querySelector(".song-continue");
 const completionFirst = document.querySelector("#completion-first");
-const completionSecond = document.querySelector("#completion-second");
 const songCredit = document.querySelector("#song-credit");
 const finalScene = document.querySelector("#chapter-three-final");
 const finalMain = document.querySelector("#final-main");
@@ -60,6 +73,7 @@ let lyricIndex = -1;
 let lyricSection = "";
 let lyricSectionIndex = -1;
 let sectionTimer;
+let currentSceneId = null;
 
 const configuredName = CONFIG.HER_NAME.trim();
 if (configuredName) {
@@ -95,8 +109,15 @@ if (parsedBirthday) {
   birthdayDate.hidden = false;
 }
 
-function showScene(sceneId) {
+function renderScene(sceneId) {
+  if (!sceneIds.has(sceneId) || !Object.hasOwn(SCENE_FLOW, sceneId)) {
+    console.error("Unknown birthday scene:", sceneId);
+    return false;
+  }
+  if (sceneId === currentSceneId) return true;
+
   const wasSongSceneActive = songScene.classList.contains("is-active");
+  currentSceneId = sceneId;
 
   for (const scene of scenes) {
     const isActive = scene.id === sceneId;
@@ -106,7 +127,6 @@ function showScene(sceneId) {
 
   if (wasSongSceneActive && sceneId !== "song-scene") {
     songAudio.pause();
-    songAudio.currentTime = 0;
     songScene.classList.remove("is-playing");
   }
 
@@ -151,11 +171,80 @@ function showScene(sceneId) {
       finalReplayEarly.hidden = false;
     }
   }
+  return true;
 }
 
-document.querySelectorAll("[data-go]").forEach((button) => {
-  button.addEventListener("click", () => showScene(button.dataset.go));
+function writeSceneUrl(sceneId, replace = false) {
+  const url = new URL(window.location.href);
+  url.hash = sceneId;
+  const state = { ...(window.history.state ?? {}), birthdayScene: sceneId };
+  window.history[replace ? "replaceState" : "pushState"](state, "", url);
+}
+
+function readSceneFromUrl() {
+  let requestedScene = window.location.hash.slice(1);
+  try {
+    requestedScene = decodeURIComponent(requestedScene);
+  } catch {
+    requestedScene = "";
+  }
+
+  if (!requestedScene) {
+    writeSceneUrl("opening", true);
+    return "opening";
+  }
+  if (!sceneIds.has(requestedScene) || !Object.hasOwn(SCENE_FLOW, requestedScene)) {
+    console.error("Unknown birthday scene in URL:", requestedScene);
+    writeSceneUrl("opening", true);
+    return "opening";
+  }
+  return requestedScene;
+}
+
+function navigateToScene(sceneId, { replace = false } = {}) {
+  if (!sceneIds.has(sceneId) || !Object.hasOwn(SCENE_FLOW, sceneId)) {
+    console.error("Unknown birthday scene:", sceneId);
+    return false;
+  }
+  if (sceneId === currentSceneId) return true;
+  writeSceneUrl(sceneId, replace);
+  return renderScene(sceneId);
+}
+
+function navigateBy(relation) {
+  const destination = SCENE_FLOW[currentSceneId]?.[relation];
+  if (!destination) {
+    console.error(`No ${relation} scene is defined for:`, currentSceneId);
+    return;
+  }
+  if (relation === "previous") {
+    if (window.history.state?.birthdayScene === destination) {
+      window.history.back();
+      return;
+    }
+    navigateToScene(destination, { replace: true });
+    return;
+  }
+  navigateToScene(destination);
+}
+
+function syncSceneFromHistory() {
+  renderScene(readSceneFromUrl());
+}
+
+renderScene(readSceneFromUrl());
+document.querySelectorAll("[data-next]").forEach((button) => {
+  button.addEventListener("click", () => navigateBy("next"));
 });
+document.querySelectorAll("[data-previous]").forEach((button) => {
+  button.addEventListener("click", () => navigateBy("previous"));
+});
+document.querySelectorAll("[data-archive]").forEach((button) => {
+  button.addEventListener("click", () => navigateBy("archive"));
+});
+window.addEventListener("popstate", syncSceneFromHistory);
+window.addEventListener("hashchange", syncSceneFromHistory);
+window.addEventListener("birthday-session-reset", () => restartFromBeginning({ replaceHistory: true }));
 
 document.querySelectorAll("[data-secret-trigger]").forEach((button) => {
   button.addEventListener("click", () => {
@@ -177,7 +266,7 @@ document.querySelectorAll("[data-secret-trigger]").forEach((button) => {
   });
 });
 
-function restartFromBeginning() {
+function restartFromBeginning({ replaceHistory = false } = {}) {
   window.clearTimeout(continueRevealTimer);
   window.clearTimeout(finaleTimer);
   window.clearTimeout(finalReplayTimer);
@@ -220,8 +309,7 @@ function restartFromBeginning() {
   songStatus.hidden = true;
   songStatusText.textContent = "";
   completionFirst.hidden = true;
-  completionSecond.hidden = true;
-  showScene("opening");
+  navigateToScene("opening", { replace: replaceHistory });
 
   const openingPieces = document.querySelectorAll(".opening-title, .opening-year, .opening-note, .opening-today, .opening-enter");
   openingPieces.forEach((element) => { element.style.animation = "none"; });
@@ -388,7 +476,6 @@ songRetry.addEventListener("click", () => {
   songSection.hidden = true;
   songCredit.hidden = true;
   completionFirst.hidden = true;
-  completionSecond.hidden = true;
   songError.hidden = true;
   songContinue.hidden = true;
   songPlay.hidden = false;
@@ -409,7 +496,6 @@ songAudio.addEventListener("play", () => {
     completionTimers = [];
     window.clearTimeout(sectionTimer);
     completionFirst.hidden = true;
-    completionSecond.hidden = true;
     songCredit.hidden = true;
     songSection.hidden = true;
     songSection.classList.remove("is-visible");
@@ -484,9 +570,8 @@ function finishSong() {
       songLyricNext.textContent = "";
       completionFirst.hidden = false;
     }, 1800),
-    window.setTimeout(() => { completionSecond.hidden = false; }, 3400),
-    window.setTimeout(() => { songCredit.hidden = false; }, 5200),
-    window.setTimeout(() => { songContinue.hidden = false; }, 7900),
+    window.setTimeout(() => { songCredit.hidden = false; }, 3500),
+    window.setTimeout(() => { songContinue.hidden = false; }, 6200),
   ];
 }
 

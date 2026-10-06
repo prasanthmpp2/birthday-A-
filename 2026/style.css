@@ -284,7 +284,15 @@ button, a { font: inherit; }
 .chapter-one-revisit { color: #b5a494; border-color: rgb(217 177 126 / 0.22); font-size: 0.64rem; letter-spacing: 0.13em; }
 .chapter-one-revisit:hover,
 .chapter-one-revisit:focus-visible { color: #f2ddc3; }
-.chapter-two-continue { margin-top: 38px; }
+.archive-button { min-height: 44px; margin-top: 12px; color: #a99b8b; border-color: rgb(217 177 126 / 0.2); font-size: 0.62rem; }
+.archive-button:hover,
+.archive-button:focus-visible { color: #f2ddc3; }
+.opening-archive { opacity: 0; animation: reveal 1.15s var(--ease) 4.45s forwards; }
+.birthday-mode .opening-archive { animation-delay: 5.1s; }
+.scene-back { min-height: 44px; margin-top: 8px; padding-inline: 18px; border-color: transparent; color: #827a70; font-size: 0.61rem; letter-spacing: 0.14em; }
+.scene-back:hover,
+.scene-back:focus-visible { border-color: rgb(217 177 126 / 0.28); color: #e4d6c7; }
+.final-main .scene-back { margin: 20px auto 0; }
 .birthday-content { max-width: 620px; }
 .birthday-eyebrow, .birthday-year, .birthday-dayline, .birthday-heading, .birthday-date, .birthday-name, .birthday-next { opacity: 0; }
 .birthday-heading {
@@ -439,6 +447,7 @@ button, a { font: inherit; }
   place-items: center;
   text-align: center;
 }
+.final-content > .scene-back { position: absolute; z-index: 2; bottom: 8px; left: 50%; transform: translateX(-50%); }
 .final-main { width: 100%; transition: opacity 1200ms ease; }
 .final-number, .final-chapter, .final-status, .final-best-part,
 .final-line, .final-until, .final-keep, .final-birthday,
