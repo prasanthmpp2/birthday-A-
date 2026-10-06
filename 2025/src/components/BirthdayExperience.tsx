@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -13,22 +14,123 @@ import { Sparkles } from "lucide-react";
 
 type Step = "gift" | "name" | "greeting" | "reveal" | "choice" | "gallery";
 
+const STEP_FLOW: Record<Step, { previous?: Step; next?: Step }> = {
+  gift: { next: "name" },
+  name: { previous: "gift", next: "greeting" },
+  greeting: { previous: "name", next: "reveal" },
+  reveal: { previous: "greeting", next: "choice" },
+  choice: { previous: "reveal", next: "gallery" },
+  gallery: { previous: "choice" },
+};
+const STEP_IDS = new Set<Step>(Object.keys(STEP_FLOW) as Step[]);
+const NAME_REQUIRED_STEPS = new Set<Step>(["greeting", "reveal", "choice", "gallery"]);
+
+function resolveStep(hash: string, savedName?: string): Step {
+  const requested = hash.replace(/^#/, "") as Step;
+  if (!STEP_IDS.has(requested)) return "gift";
+  if (NAME_REQUIRED_STEPS.has(requested) && !savedName?.trim()) return "name";
+  return requested;
+}
+
 const BirthdayExperience = () => {
-  const [step, setStep] = useState<Step>("gift");
-  const [name, setName] = useState("");
-  const [inputValue, setInputValue] = useState("");
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [step, setStep] = useState<Step>(() => resolveStep(location.hash, location.state?.birthday2025Name));
+  const [name, setName] = useState<string>(() => location.state?.birthday2025Name ?? "");
+  const [inputValue, setInputValue] = useState<string>(() => location.state?.birthday2025Name ?? "");
+  const celebrationTimer = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (celebrationTimer.current) {
+      window.clearTimeout(celebrationTimer.current);
+      celebrationTimer.current = null;
+    }
+
+    const savedName = typeof location.state?.birthday2025Name === "string"
+      ? location.state.birthday2025Name
+      : "";
+    const nextStep = resolveStep(location.hash, savedName);
+    setStep(nextStep);
+    if (savedName) {
+      setName(savedName);
+      setInputValue((current) => current || savedName);
+    }
+
+    if (location.hash !== `#${nextStep}`) {
+      navigate({ pathname: location.pathname, search: location.search, hash: `#${nextStep}` }, {
+        replace: true,
+        state: {
+          birthday2025Step: nextStep,
+          birthday2025PreviousStep: null,
+          birthday2025Name: savedName,
+        },
+      });
+    }
+  }, [location.hash, location.pathname, location.search, location.state, navigate]);
+
+  const navigateToStep = (nextStep: Step, { replace = false, nextName = name } = {}) => {
+    if (!STEP_IDS.has(nextStep)) {
+      console.error("Unknown 2025 birthday step:", nextStep);
+      return;
+    }
+    if (nextStep !== step && !Object.values(STEP_FLOW[step]).includes(nextStep)) {
+      console.error(`Invalid 2025 birthday transition: ${step} → ${nextStep}`);
+      return;
+    }
+    if (celebrationTimer.current) {
+      window.clearTimeout(celebrationTimer.current);
+      celebrationTimer.current = null;
+    }
+    setName(nextName);
+    setStep(nextStep);
+    navigate({ pathname: location.pathname, search: location.search, hash: `#${nextStep}` }, {
+      replace,
+      state: {
+        birthday2025Step: nextStep,
+        birthday2025PreviousStep: replace ? null : step,
+        birthday2025Name: nextName,
+      },
+    });
+  };
+
+  const goPrevious = () => {
+    const previousStep = STEP_FLOW[step].previous;
+    if (!previousStep) return;
+    if (location.state?.birthday2025PreviousStep === previousStep) {
+      navigate(-1);
+      return;
+    }
+    navigateToStep(previousStep, { replace: true });
+  };
+
+  const goNext = () => {
+    const nextStep = STEP_FLOW[step].next;
+    if (nextStep) navigateToStep(nextStep);
+  };
+
+  const backButton = (
+    <Button
+      type="button"
+      variant="ghost"
+      onClick={goPrevious}
+      className="mx-auto flex w-fit min-w-24 px-5 text-card-foreground/70 hover:text-card-foreground"
+    >
+      ← Back
+    </Button>
+  );
 
   const handleNameSubmit = () => {
     if (inputValue.trim()) {
-      setName(inputValue.trim());
-      setStep("greeting");
+      navigateToStep("greeting", { nextName: inputValue.trim() });
     }
   };
 
   const handleCelebrate = () => {
     celebrationConfetti();
-    setTimeout(() => {
-      setStep("gallery");
+    if (celebrationTimer.current) window.clearTimeout(celebrationTimer.current);
+    celebrationTimer.current = window.setTimeout(() => {
+      celebrationTimer.current = null;
+      navigateToStep("gallery");
     }, 500);
   };
 
@@ -49,7 +151,7 @@ const BirthdayExperience = () => {
             <button
               type="button"
               aria-label="Open birthday gift"
-              onClick={() => setStep("name")}
+              onClick={goNext}
               className="mx-auto mb-6 block rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
             >
               <img
@@ -108,6 +210,7 @@ const BirthdayExperience = () => {
                 />
               </div>
               <Button
+                type="button"
                 onClick={handleNameSubmit}
                 className="w-full bg-gradient-button hover:opacity-90 text-primary-foreground font-semibold py-5 text-base rounded-full shadow-button border-0 transition-all duration-300 hover:scale-105 hover:shadow-glow animate-fade-in-up relative overflow-hidden group"
                 style={{ animationDelay: '0.4s' }}
@@ -117,6 +220,7 @@ const BirthdayExperience = () => {
                 </span>
                 <div className="absolute inset-0 bg-shimmer bg-[length:200%_100%] opacity-0 group-hover:opacity-100 group-hover:animate-shimmer" />
               </Button>
+              {backButton}
             </div>
           </div>
         </Card>
@@ -159,7 +263,8 @@ const BirthdayExperience = () => {
                 Happy Birthday, gorgeous! Today is all about celebrating you. 🌟
               </p>
               <Button
-                onClick={() => setStep("reveal")}
+                type="button"
+                onClick={goNext}
                 className="mt-2 bg-gradient-accent hover:opacity-90 text-accent-foreground font-semibold px-6 py-3 text-sm md:text-base rounded-full shadow-button border-0 transition-all duration-300 hover:scale-105 hover:shadow-glow relative overflow-hidden group"
               >
                 <span className="relative z-10 flex items-center gap-2">
@@ -167,6 +272,7 @@ const BirthdayExperience = () => {
                 </span>
                 <div className="absolute inset-0 bg-shimmer bg-[length:200%_100%] opacity-0 group-hover:opacity-100 group-hover:animate-shimmer" />
               </Button>
+              {backButton}
             </div>
           </Card>
         </div>
@@ -224,7 +330,8 @@ const BirthdayExperience = () => {
             </div>
           </Card>
           <Button
-            onClick={() => setStep("choice")}
+            type="button"
+            onClick={goNext}
             className="bg-gradient-accent hover:opacity-90 text-accent-foreground font-semibold px-8 py-5 text-lg rounded-full shadow-button border-0 transition-all duration-300 hover:scale-105 hover:shadow-glow animate-fade-in-up relative overflow-hidden group"
             style={{ animationDelay: '1.5s' }}
           >
@@ -233,6 +340,7 @@ const BirthdayExperience = () => {
             </span>
             <div className="absolute inset-0 bg-shimmer bg-[length:200%_100%] opacity-0 group-hover:opacity-100 group-hover:animate-shimmer" />
           </Button>
+          {backButton}
         </div>
       </div>
     );
@@ -272,6 +380,7 @@ const BirthdayExperience = () => {
             </p>
             <div className="space-y-4">
               <Button
+                type="button"
                 onClick={handleCelebrate}
                 className="w-full bg-gradient-button hover:opacity-90 text-primary-foreground font-semibold py-5 text-lg rounded-full shadow-button border-0 transition-all duration-300 hover:scale-105 hover:shadow-glow animate-fade-in-up relative overflow-hidden group"
                 style={{ animationDelay: '0.6s' }}
@@ -283,6 +392,7 @@ const BirthdayExperience = () => {
                 <div className="absolute inset-0 bg-shimmer bg-[length:200%_100%] opacity-0 group-hover:opacity-100 group-hover:animate-shimmer" />
               </Button>
               <Button
+                type="button"
                 onClick={handleCelebrate}
                 variant="destructive"
                 className="w-full font-semibold py-5 text-lg rounded-full shadow-button border-0 transition-all duration-300 hover:scale-105 animate-fade-in-up"
@@ -291,6 +401,7 @@ const BirthdayExperience = () => {
                 Maybe another time 😔
               </Button>
             </div>
+            {backButton}
           </div>
         </Card>
       </div>
@@ -299,7 +410,7 @@ const BirthdayExperience = () => {
 
   // Gallery Step
   if (step === "gallery") {
-    return <Carousel3D name={name} />;
+    return <Carousel3D name={name} onBack={goPrevious} />;
   }
 
   return null;

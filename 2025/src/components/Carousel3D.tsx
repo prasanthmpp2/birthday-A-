@@ -13,14 +13,16 @@ import "./Carousel3D.css";
 import { ConfettiEffect } from "./ConfettiEffect";
 import { ParticleBackground } from "./ParticleBackground";
 import { Heart } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const photos = [photo9, photo10, photo11, photo12, photo13, photo14, photo15, photo16, photo17, photo18];
 
 interface Carousel3DProps {
   name: string;
+  onBack: () => void;
 }
 
-const Carousel3D = ({ name }: Carousel3DProps) => {
+const Carousel3D = ({ name, onBack }: Carousel3DProps) => {
   const [isPlaying, setIsPlaying] = useState(true);
   
   // Calculate the rotation angle for each photo
@@ -80,6 +82,10 @@ const Carousel3D = ({ name }: Carousel3DProps) => {
           })}
         </div>
       </div>
+
+      <Button type="button" variant="outline" onClick={onBack} className="relative z-10 mt-4">
+        ← Back
+      </Button>
     </main>
   );
 };

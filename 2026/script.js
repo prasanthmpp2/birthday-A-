@@ -177,7 +177,11 @@ function renderScene(sceneId) {
 function writeSceneUrl(sceneId, replace = false) {
   const url = new URL(window.location.href);
   url.hash = sceneId;
-  const state = { ...(window.history.state ?? {}), birthdayScene: sceneId };
+  const state = {
+    ...(window.history.state ?? {}),
+    birthdayScene: sceneId,
+    previousBirthdayScene: replace ? null : currentSceneId,
+  };
   window.history[replace ? "replaceState" : "pushState"](state, "", url);
 }
 
@@ -218,7 +222,7 @@ function navigateBy(relation) {
     return;
   }
   if (relation === "previous") {
-    if (window.history.state?.birthdayScene === destination) {
+    if (window.history.state?.previousBirthdayScene === destination) {
       window.history.back();
       return;
     }
