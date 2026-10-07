@@ -1,0 +1,117 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function ownsUser(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    function validPage(page) {
+      return page is string
+        && page in [
+          'opening',
+          'chapter-one',
+          'birthday-reveal',
+          'birthday-message',
+          'personal-note',
+          'song-scene',
+          'chapter-three-final'
+        ];
+    }
+
+    function validJourney() {
+      return request.resource.data.keys().hasAll([
+          'firstLoginAt', 'lastLoginAt', 'loginCount',
+          'visitCount', 'firstVisitAt', 'lastVisitAt',
+          'chapter1Visited', 'chapter1VisitCount', 'chapter2Visits',
+          'chapter3Reached', 'songStarted', 'songCompleted',
+          'songPlayCount', 'songReplayCount', 'lastPage', 'updatedAt'
+        ])
+        && request.resource.data.keys().hasOnly([
+          'firstLoginAt', 'lastLoginAt', 'loginCount',
+          'visitCount', 'firstVisitAt', 'lastVisitAt',
+          'chapter1Visited', 'chapter1VisitCount', 'chapter2Visits',
+          'chapter3Reached', 'songStarted', 'songCompleted',
+          'songPlayCount', 'songReplayCount', 'lastPage', 'updatedAt'
+        ])
+        && request.resource.data.firstLoginAt is timestamp
+        && request.resource.data.lastLoginAt is timestamp
+        && request.resource.data.firstVisitAt is timestamp
+        && request.resource.data.lastVisitAt is timestamp
+        && request.resource.data.updatedAt is timestamp
+        && request.resource.data.loginCount is int
+        && request.resource.data.loginCount >= 0
+        && request.resource.data.visitCount is int
+        && request.resource.data.visitCount >= 0
+        && request.resource.data.chapter1Visited is bool
+        && request.resource.data.chapter1VisitCount is int
+        && request.resource.data.chapter1VisitCount >= 0
+        && request.resource.data.chapter2Visits is int
+        && request.resource.data.chapter2Visits >= 0
+        && request.resource.data.chapter3Reached is bool
+        && request.resource.data.songStarted is bool
+        && request.resource.data.songCompleted is bool
+        && request.resource.data.songPlayCount is int
+        && request.resource.data.songPlayCount >= 0
+        && request.resource.data.songReplayCount is int
+        && request.resource.data.songReplayCount >= 0
+        && validPage(request.resource.data.lastPage);
+    }
+
+    function validSession(sessionId) {
+      return request.resource.data.keys().hasAll([
+          'sessionId', 'startedAt', 'endedAt', 'durationSeconds', 'lastPage'
+        ])
+        && request.resource.data.keys().hasOnly([
+          'sessionId', 'startedAt', 'endedAt', 'durationSeconds', 'lastPage'
+        ])
+        && request.resource.data.sessionId == sessionId
+        && request.resource.data.startedAt is timestamp
+        && (
+          request.resource.data.endedAt == null
+          || request.resource.data.endedAt is timestamp
+        )
+        && request.resource.data.durationSeconds is int
+        && request.resource.data.durationSeconds >= 0
+        && validPage(request.resource.data.lastPage);
+    }
+
+    match /users/{uid} {
+      allow read: if ownsUser(uid);
+
+      allow create: if ownsUser(uid) && validJourney();
+
+      allow update: if ownsUser(uid)
+        && validJourney()
+        && request.resource.data.firstLoginAt == resource.data.firstLoginAt
+        && request.resource.data.firstVisitAt == resource.data.firstVisitAt
+        && request.resource.data.loginCount >= resource.data.loginCount
+        && request.resource.data.visitCount >= resource.data.visitCount
+        && request.resource.data.lastLoginAt >= resource.data.lastLoginAt
+        && request.resource.data.lastVisitAt >= resource.data.lastVisitAt
+        && request.resource.data.chapter1VisitCount >= resource.data.chapter1VisitCount
+        && request.resource.data.chapter2Visits >= resource.data.chapter2Visits
+        && request.resource.data.songPlayCount >= resource.data.songPlayCount
+        && request.resource.data.songReplayCount >= resource.data.songReplayCount
+        && (!resource.data.chapter1Visited || request.resource.data.chapter1Visited)
+        && (!resource.data.chapter3Reached || request.resource.data.chapter3Reached)
+        && (!resource.data.songStarted || request.resource.data.songStarted)
+        && (!resource.data.songCompleted || request.resource.data.songCompleted);
+
+      allow delete: if false;
+
+      match /sessions/{sessionId} {
+        allow read: if ownsUser(uid);
+
+        allow create: if ownsUser(uid) && validSession(sessionId);
+
+        allow update: if ownsUser(uid)
+          && validSession(sessionId)
+          && request.resource.data.startedAt == resource.data.startedAt
+          && request.resource.data.durationSeconds >= resource.data.durationSeconds;
+
+        allow delete: if false;
+      }
+    }
+  }
+}

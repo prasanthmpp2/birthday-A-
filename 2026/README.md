@@ -12,6 +12,7 @@ HTML, CSS, and vanilla JavaScript. Google sign-in uses the Firebase Authenticati
 index.html
 style.css
 script.js
+capture-protection.js
 auth-gate.js
 song-lyrics.js
 assets/song.aac
@@ -25,7 +26,11 @@ The 2026 experience is a single-page scene app. `script.js` owns the scene map a
 
 Continue and Back buttons use the central scene map. Invalid scene hashes log a developer error and fall back to the opening scene. Firebase Authentication only gates access; signing out intentionally resets the in-session route to the opening. The 2025 app remains a separate React single-page experience; its steps are recorded in the hash and support browser Back/Forward too.
 
-The original 2026 transitions already changed visible scenes in place; they did not link to `index.html`. The reset behavior came from having no URL/history state, which caused every refresh to reinitialize the hard-coded opening scene. A duplicate 2026 intro also forced an unnecessary stop after the opening; the archive is now optional and the main flow proceeds directly to the birthday reveal. Replay is the only intentional full-journey reset. The song lyric timeline remains based on the audio's `currentTime` plus the configured vocal offset. Firebase Firestore visit/session analytics are not currently implemented.
+The original 2026 transitions already changed visible scenes in place; they did not link to `index.html`. The reset behavior came from having no URL/history state, which caused every refresh to reinitialize the hard-coded opening scene. A duplicate 2026 intro also forced an unnecessary stop after the opening; the archive is now optional and the main flow proceeds directly to the birthday reveal. Replay is the only intentional full-journey reset. The song lyric timeline remains based on the audio's `currentTime` plus the configured vocal offset. Firestore journey tracking is documented below.
+
+## Capture-aware privacy behavior
+
+Both projects use the Page Visibility API to cover the experience and pause playing media when the page is backgrounded. Returning restores the same scene; media stays paused until the visitor chooses to resume. Ordinary window focus loss is not treated as evidence of a screenshot. Browsers do not reliably expose OS screenshots, external screen recorders, or camera recording, so this is a brief privacy measure rather than screenshot prevention. No focus or visibility events are sent to Firebase or stored.
 
 ## Enable Google sign-in
 
@@ -77,3 +82,18 @@ GitHub Pages sites are public. Only publish personal details and audio that are 
 - Confirm the song file is the intended version and plays, pauses, seeks, and reaches its ending message.
 - Test the published site at mobile and desktop sizes, including the replay button and reduced-motion setting.
 - Check that the generated Pages URL loads directly and after a refresh.
+
+## Firestore journey tracking
+
+The 2026 site uses the existing Firebase project `ai-study-assistant-68a1b` and its default Cloud Firestore database. `auth-gate.js` retains the existing Google Authentication flow and loads the Firestore SDK independently; `journey-tracker.js` uses the authenticated UID as the only user document key. Firestore failures are caught and do not block sign-in, navigation, or audio.
+
+The tracker stores one summary document at `users/{uid}` and one current/previous session document at `users/{uid}/sessions/{sessionId}`. A session is reused after refresh in the same tab; 30 minutes without activity starts a new visit. It stores login/visit timestamps and counts, chapter milestones (Chapter One means only the 2026 archive preview), song started/completed/play/replay counts, last page, and session start/end/duration. It does not store email, IP address, device identifiers, or a raw event history. Song completion requires the audio element to end after at least 95% of its duration was actually played.
+
+The root `firestore.rules` file is the security policy. `firebase.json` points Firebase CLI to that rules file, and `.firebaserc` selects `ai-study-assistant-68a1b`. Publish after signing in to Firebase CLI with an account authorized to manage this project:
+
+```sh
+firebase login
+firebase deploy --only firestore:rules --project ai-study-assistant-68a1b
+```
+
+Rules permit an authenticated user to read and write only their own UID summary and session documents, with a fixed field schema and monotonic counters. This is client-side journey memory, not tamper-proof analytics: a user can alter their own data. No Firestore collections need to be created manually; the first authenticated visit creates the documents. The separate 2025 app and its authentication remain outside this tracking system.

@@ -1,3 +1,5 @@
+import { createJourneyTracker } from "./journey-tracker.js";
+
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyClJpLNNLSUJDQMQTpUxSAAmIZOonply5M",
   authDomain: "ai-study-assistant-68a1b.firebaseapp.com",
@@ -22,6 +24,42 @@ let GoogleAuthProvider;
 let signInWithPopup;
 let signInWithRedirect;
 let signOut;
+let journeyTracker = null;
+const pendingJourneyEvents = [];
+
+document.addEventListener("birthday-journey-event", (event) => {
+  if (journeyTracker) {
+    journeyTracker.handleEvent(event.detail);
+  } else if (activeUser && pendingJourneyEvents.length < 64) {
+    pendingJourneyEvents.push(event.detail);
+  }
+});
+
+window.addEventListener("pagehide", () => journeyTracker?.finishOnPageHide());
+window.addEventListener("pageshow", (event) => {
+  if (event.persisted) journeyTracker?.resumeSession();
+});
+
+function startJourneyTracking(user) {
+  if (!user || !journeyTracker) return;
+  const currentPage = document.querySelector(".scene.is-active")?.id ?? "opening";
+  journeyTracker.start(user, currentPage);
+}
+
+function loadJourneyTracking(app) {
+  import("https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js")
+    .then((firestoreSdk) => {
+      const database = firestoreSdk.getFirestore(app);
+      journeyTracker = createJourneyTracker(database, firestoreSdk);
+      startJourneyTracking(activeUser);
+      pendingJourneyEvents.splice(0).forEach((eventDetail) => journeyTracker.handleEvent(eventDetail));
+    })
+    .catch((error) => {
+      // Firestore is optional to the experience. Auth, navigation, and media continue.
+      console.warn("[Journey tracking] Firestore could not be initialized.", error?.code ?? "unknown");
+      pendingJourneyEvents.length = 0;
+    });
+}
 
 function setStatus(message, isError = false) {
   authStatus.textContent = message;
@@ -90,8 +128,16 @@ async function initializeFirebaseAuth() {
     signInWithRedirect = authSdk.signInWithRedirect;
     signOut = authSdk.signOut;
 
+    // Load tracking independently so a Firestore outage cannot block Google sign-in.
+    loadJourneyTracking(app);
+
     authSdk.onAuthStateChanged(firebaseAuth, (user) => {
       activeUser = user;
+      if (user) startJourneyTracking(user);
+      else {
+        journeyTracker?.stop();
+        pendingJourneyEvents.length = 0;
+      }
       authResolved = true;
       renderAccessState();
     }, (error) => {

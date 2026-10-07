@@ -68,12 +68,19 @@ let secretClickCount = 0;
 let completionTimers = [];
 let songCompleted = false;
 let songHasPlayed = false;
+let songPlaybackTrackedThisRun = false;
 const lyricEntries = Array.isArray(window.SONG_LYRICS) ? window.SONG_LYRICS : [];
 let lyricIndex = -1;
 let lyricSection = "";
 let lyricSectionIndex = -1;
 let sectionTimer;
 let currentSceneId = null;
+
+function emitJourneyEvent(type, detail = {}) {
+  document.dispatchEvent(new CustomEvent("birthday-journey-event", {
+    detail: { type, ...detail },
+  }));
+}
 
 const configuredName = CONFIG.HER_NAME.trim();
 if (configuredName) {
@@ -171,6 +178,7 @@ function renderScene(sceneId) {
       finalReplayEarly.hidden = false;
     }
   }
+  emitJourneyEvent("page_view", { page: sceneId });
   return true;
 }
 
@@ -298,6 +306,7 @@ function restartFromBeginning({ replaceHistory = false } = {}) {
   songContinue.hidden = true;
   songCompleted = false;
   songHasPlayed = false;
+  songPlaybackTrackedThisRun = false;
   lyricIndex = -1;
   lyricSection = "";
   lyricSectionIndex = -1;
@@ -469,6 +478,7 @@ songRetry.addEventListener("click", () => {
   songAudio.load();
   songScene.classList.remove("is-playing", "is-ending", "is-complete");
   songHasPlayed = false;
+  songPlaybackTrackedThisRun = false;
   songCompleted = false;
   lyricIndex = -1;
   lyricSection = "";
@@ -515,6 +525,12 @@ songAudio.addEventListener("play", () => {
   updateSongLyric();
 });
 
+songAudio.addEventListener("playing", () => {
+  if (songPlaybackTrackedThisRun) return;
+  songPlaybackTrackedThisRun = true;
+  emitJourneyEvent("song_playthrough_started");
+});
+
 songAudio.addEventListener("pause", () => {
   songScene.classList.remove("is-playing");
   if (songScene.classList.contains("is-active") && !songAudio.ended) songContinue.hidden = false;
@@ -536,7 +552,6 @@ songAudio.addEventListener("timeupdate", () => {
   updateSongLyric();
   if (Number.isFinite(songAudio.duration) && songAudio.duration > 0) {
     songProgress.value = String(Math.round((songAudio.currentTime / songAudio.duration) * 1000));
-    if (songAudio.currentTime >= songAudio.duration) finishSong();
   }
 });
 songAudio.addEventListener("seeking", () => updateSongLyric(false));
@@ -556,6 +571,17 @@ songVolume.addEventListener("input", () => {
 
 function finishSong() {
   if (songCompleted) return;
+  let playedSeconds = 0;
+  for (let index = 0; index < songAudio.played.length; index += 1) {
+    playedSeconds += songAudio.played.end(index) - songAudio.played.start(index);
+  }
+  const reachedCompletionThreshold = Number.isFinite(songAudio.duration)
+    && songAudio.duration > 0
+    && playedSeconds / songAudio.duration >= 0.95;
+  if (reachedCompletionThreshold) {
+    emitJourneyEvent("song_completed");
+    songPlaybackTrackedThisRun = false;
+  }
   songCompleted = true;
   window.clearTimeout(sectionTimer);
   songSection.classList.remove("is-visible");

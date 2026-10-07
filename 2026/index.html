@@ -15,11 +15,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
     <script src="song-lyrics.js" defer></script>
+    <script src="capture-protection.js" defer></script>
     <script src="script.js" defer></script>
   </head>
   <body>
-    <p class="privacy-reminder" role="note">Please keep this personal — no screenshots or screen recordings.</p>
-
     <section class="auth-gate" id="auth-gate" aria-labelledby="auth-title">
       <div class="auth-card">
         <p class="auth-eyebrow">A PERSONAL BIRTHDAY CHAPTER</p>
@@ -220,6 +219,13 @@
       </section>
       <p class="secret-note" id="secret-note" role="status" aria-live="polite" hidden>You found a little extra.<br />That's all. :)</p>
     </main>
+
+    <div class="protected-view" id="protected-view" role="status" aria-live="polite" aria-hidden="true" hidden>
+      <div class="protected-view__message">
+        <p class="protected-view__eyebrow">A MOMENT TO YOURSELF</p>
+        <p class="protected-view__title">Some moments are better experienced here.</p>
+      </div>
+    </div>
     <script type="module" src="auth-gate.js"></script>
   </body>
 </html>

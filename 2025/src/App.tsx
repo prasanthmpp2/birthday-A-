@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import PrivacyProtection from "./components/PrivacyProtection";
 
 const queryClient = new QueryClient();
 
@@ -14,17 +15,15 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, "") || "/"}>
-        <>
-          <p className="privacy-reminder" role="note">
-            Please keep this personal — no screenshots or screen recordings.
-          </p>
+        <PrivacyProtection>
+          {/* Protection responds to page visibility; it cannot block device screenshots. */}
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/index.html" element={<Navigate to="/" replace />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </>
+        </PrivacyProtection>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
