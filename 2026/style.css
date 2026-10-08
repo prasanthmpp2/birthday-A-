@@ -329,22 +329,22 @@ body.capture-protected .auth-gate * { animation-play-state: paused !important; }
 #personal-note-title,
 #personal-note .personal-copy p,
 #personal-note .reading-next { opacity: 0; }
-#birthday-message.is-active #message-title { animation: reveal 700ms var(--ease) 120ms forwards; }
-#birthday-message.is-active .letter-copy p:nth-child(1) { animation: reveal 650ms var(--ease) 280ms forwards; }
-#birthday-message.is-active .letter-copy p:nth-child(2) { animation: reveal 650ms var(--ease) 480ms forwards; }
-#birthday-message.is-active .letter-copy p:nth-child(3) { animation: reveal 650ms var(--ease) 680ms forwards; }
-#birthday-message.is-active .letter-copy p:nth-child(4) { animation: reveal 650ms var(--ease) 880ms forwards; }
-#birthday-message.is-active .letter-copy p:nth-child(5) { animation: reveal 650ms var(--ease) 1080ms forwards; }
-#birthday-message.is-active .letter-copy p:nth-child(6) { animation: reveal 650ms var(--ease) 1280ms forwards; }
-#birthday-message.is-active .letter-copy p:nth-child(7) { animation: reveal 650ms var(--ease) 1500ms forwards; }
-#birthday-message.is-active .letter-copy p:nth-child(8) { animation: reveal 700ms var(--ease) 1880ms forwards; }
-#birthday-message.is-active .reading-next { animation: reveal 700ms var(--ease) 2180ms forwards; }
-#personal-note.is-active #personal-note-title { animation: reveal 750ms var(--ease) 120ms forwards; }
-#personal-note.is-active .personal-copy p:nth-child(1) { animation: reveal 650ms var(--ease) 360ms forwards; }
-#personal-note.is-active .personal-copy p:nth-child(2) { animation: reveal 700ms var(--ease) 660ms forwards; }
-#personal-note.is-active .personal-copy p:nth-child(3) { animation: reveal 650ms var(--ease) 1040ms forwards; }
-#personal-note.is-active .personal-copy p:nth-child(4) { animation: reveal 650ms var(--ease) 1380ms forwards; }
-#personal-note.is-active .reading-next { animation: reveal 700ms var(--ease) 1740ms forwards; }
+#birthday-message.is-active #message-title { animation: reveal 900ms var(--ease) 450ms forwards; }
+#birthday-message.is-active .letter-copy p:nth-child(1) { animation: reveal 850ms var(--ease) 1100ms forwards; }
+#birthday-message.is-active .letter-copy p:nth-child(2) { animation: reveal 850ms var(--ease) 1800ms forwards; }
+#birthday-message.is-active .letter-copy p:nth-child(3) { animation: reveal 850ms var(--ease) 2500ms forwards; }
+#birthday-message.is-active .letter-copy p:nth-child(4) { animation: reveal 850ms var(--ease) 3200ms forwards; }
+#birthday-message.is-active .letter-copy p:nth-child(5) { animation: reveal 850ms var(--ease) 3900ms forwards; }
+#birthday-message.is-active .letter-copy p:nth-child(6) { animation: reveal 850ms var(--ease) 4600ms forwards; }
+#birthday-message.is-active .letter-copy p:nth-child(7) { animation: reveal 850ms var(--ease) 5400ms forwards; }
+#birthday-message.is-active .letter-copy p:nth-child(8) { animation: reveal 900ms var(--ease) 6400ms forwards; }
+#birthday-message.is-active .reading-next { animation: reveal 850ms var(--ease) 7500ms forwards; }
+#personal-note.is-active #personal-note-title { animation: reveal 900ms var(--ease) 450ms forwards; }
+#personal-note.is-active .personal-copy p:nth-child(1) { animation: reveal 850ms var(--ease) 1250ms forwards; }
+#personal-note.is-active .personal-copy p:nth-child(2) { animation: reveal 850ms var(--ease) 2100ms forwards; }
+#personal-note.is-active .personal-copy p:nth-child(3) { animation: reveal 850ms var(--ease) 2950ms forwards; }
+#personal-note.is-active .personal-copy p:nth-child(4) { animation: reveal 850ms var(--ease) 3800ms forwards; }
+#personal-note.is-active .reading-next { animation: reveal 850ms var(--ease) 4850ms forwards; }
 .letter-copy {
   margin-top: 29px;
   color: #c3c1bb;
