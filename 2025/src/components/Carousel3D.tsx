@@ -1,4 +1,4 @@
-import { useEffect, useState, type CSSProperties } from "react";
+import type { CSSProperties } from "react";
 import photo9 from "@/assets/photos/photo9.jpg";
 import photo10 from "@/assets/photos/photo10.jpg";
 import photo11 from "@/assets/photos/photo11.jpg";
@@ -23,19 +23,9 @@ interface Carousel3DProps {
 }
 
 const Carousel3D = ({ name, onBack }: Carousel3DProps) => {
-  const [isPlaying, setIsPlaying] = useState(true);
-  
   // Calculate the rotation angle for each photo
   const photoCount = photos.length;
   const angleIncrement = 360 / photoCount;
-
-  useEffect(() => {
-    // Start animation after component mounts
-    const timer = setTimeout(() => {
-      setIsPlaying(true);
-    }, 100);
-    return () => clearTimeout(timer);
-  }, []);
 
   return (
     <main className="min-h-screen bg-gradient-pink flex flex-col items-center justify-center px-4 py-8 overflow-x-hidden relative">
@@ -59,7 +49,7 @@ const Carousel3D = ({ name, onBack }: Carousel3DProps) => {
       </div>
       
       <div className="carousel-perspective animate-scale-in z-10 relative" style={{ animationDelay: '0.4s' }}>
-        <div className={`carousel-container ${isPlaying ? 'spinning' : ''} relative z-10`}>
+        <div className="carousel-container spinning relative z-10">
           {photos.map((photo, index) => {
             const rotateY = angleIncrement * index;
             return (
@@ -68,7 +58,6 @@ const Carousel3D = ({ name, onBack }: Carousel3DProps) => {
                 className="carousel-photo group"
                 style={{
                   transform: `rotateY(${rotateY}deg) translateZ(var(--carousel-radius))`,
-                  "--carousel-radius": "clamp(80px, 22vw, 260px)",
                 } as CSSProperties}
               >
                 <img

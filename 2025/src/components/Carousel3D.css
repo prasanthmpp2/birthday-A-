@@ -14,8 +14,12 @@
 }
 
 .carousel-container {
-  width: 140px;
-  height: 200px;
+  --carousel-card-width: 140px;
+  --carousel-card-height: 200px;
+  /* Radius keeps the ten cards evenly spaced around the 3D ring. */
+  --carousel-radius: 216px;
+  width: var(--carousel-card-width);
+  height: var(--carousel-card-height);
   position: relative;
   transform-style: preserve-3d;
   transform: translateZ(0);
@@ -23,13 +27,13 @@
 }
 
 .carousel-container.spinning {
-  animation: spin 48s linear infinite;
+  animation: spin 32s linear infinite;
 }
 
 .carousel-photo {
   position: absolute;
-  width: 140px;
-  height: 200px;
+  width: var(--carousel-card-width);
+  height: var(--carousel-card-height);
   left: 0;
   top: 0;
   transform-style: preserve-3d;
@@ -57,11 +61,6 @@
   }
 }
 
-/* Pause animation on hover */
-.carousel-container:hover.spinning {
-  animation-play-state: paused;
-}
-
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .carousel-perspective {
@@ -71,18 +70,25 @@
   }
   
   .carousel-container {
-    width: 110px;
-    height: 160px;
+    --carousel-card-width: 110px;
+    --carousel-card-height: 160px;
+    --carousel-radius: 170px;
   }
   
   .carousel-photo {
-    width: 110px;
-    height: 160px;
+    width: var(--carousel-card-width);
+    height: var(--carousel-card-height);
   }
 }
 
 @media (max-width: 420px) {
   .carousel-perspective {
     perspective: 650px;
+  }
+
+  .carousel-container {
+    --carousel-card-width: 88px;
+    --carousel-card-height: 132px;
+    --carousel-radius: 136px;
   }
 }
