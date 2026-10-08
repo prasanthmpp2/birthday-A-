@@ -37,8 +37,8 @@ Both projects use the Page Visibility API to cover the experience and pause play
 The 2026 experience starts behind a Google sign-in screen. `auth-gate.js` uses the Firebase web app configuration supplied for this project; Analytics is not initialized.
 
 1. In the Firebase console, open **Authentication → Sign-in method** and enable **Google**.
-2. In **Authentication → Settings → Authorized domains**, add `127.0.0.1` for local testing and the production website's domain before publishing.
-3. Serve this folder over HTTP and open the 2026 site. Desktop browsers use Google's popup flow; touch devices use redirect sign-in.
+2. Add `localhost` for local testing and the production website's hostname (without a port) under **Authentication → Settings → Authorized domains**. The live hostname `prasanthmpp2.github.io` and `localhost` are already authorized for this project.
+3. Serve this folder over HTTP and open the 2026 site. The site uses Google's popup flow on desktop and mobile because GitHub Pages is not hosted on the Firebase auth domain; redirect sign-in can fail in browsers that partition third-party storage. If a popup is blocked, allow pop-ups for the site and try again.
 
 Any Google account that can complete sign-in is currently allowed into the experience. The login screen is a client-side entry gate, not full file protection: this static site's HTML, JavaScript, and song file can still be requested directly. To restrict access to the media itself, move it to Cloud Storage for Firebase and add server-enforced Storage Security Rules.
 

@@ -22,7 +22,6 @@ let appReady = document.documentElement.dataset.birthdayAppReady === "true";
 let firebaseAuth;
 let GoogleAuthProvider;
 let signInWithPopup;
-let signInWithRedirect;
 let signOut;
 let journeyTracker = null;
 const pendingJourneyEvents = [];
@@ -88,8 +87,15 @@ function explainAuthError(error) {
       return "Google sign-in isn't enabled for this Firebase project yet.";
     case "auth/popup-closed-by-user":
       return "The Google sign-in window was closed. You can try again.";
+    case "auth/popup-blocked":
+      return "Your browser blocked the Google sign-in window. Allow pop-ups for this site and try again.";
+    case "auth/cancelled-popup-request":
+      return "A Google sign-in window is already open. Finish it or close it, then try again.";
     case "auth/network-request-failed":
       return "Couldn't reach Google. Check your connection and try again.";
+    case "auth/web-storage-unsupported":
+    case "auth/operation-not-supported-in-this-environment":
+      return "Google sign-in needs browser storage and pop-ups enabled for this site.";
     default:
       return "Google sign-in couldn't be completed. Please try again.";
   }
@@ -102,11 +108,9 @@ async function startGoogleSignIn() {
   try {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: "select_account" });
-    const useRedirect = window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 700;
-    if (useRedirect) {
-      await signInWithRedirect(firebaseAuth, provider);
-      return;
-    }
+    // GitHub Pages is outside Firebase Hosting. Redirect sign-in can fail in
+    // browsers that partition third-party storage, so use Firebase's popup
+    // flow consistently across desktop and mobile browsers.
     await signInWithPopup(firebaseAuth, provider);
   } catch (error) {
     setStatus(explainAuthError(error), true);
@@ -125,7 +129,6 @@ async function initializeFirebaseAuth() {
     firebaseAuth = authSdk.getAuth(app);
     GoogleAuthProvider = authSdk.GoogleAuthProvider;
     signInWithPopup = authSdk.signInWithPopup;
-    signInWithRedirect = authSdk.signInWithRedirect;
     signOut = authSdk.signOut;
 
     // Load tracking independently so a Firestore outage cannot block Google sign-in.
