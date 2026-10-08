@@ -289,7 +289,7 @@ body.capture-protected .auth-gate * { animation-play-state: paused !important; }
 .archive-button { min-height: 44px; margin-top: 12px; color: #a99b8b; border-color: rgb(217 177 126 / 0.2); font-size: 0.62rem; }
 .archive-button:hover,
 .archive-button:focus-visible { color: #f2ddc3; }
-.opening-archive { opacity: 0; animation: reveal 1.15s var(--ease) 4.45s forwards; }
+.opening-archive { opacity: 0; animation: archive-arrive 980ms var(--ease) 4.45s both; }
 .birthday-mode .opening-archive { animation-delay: 5.1s; }
 .scene-back { min-height: 44px; margin-top: 8px; padding-inline: 18px; border-color: transparent; color: #827a70; font-size: 0.61rem; letter-spacing: 0.14em; }
 .scene-back:hover,
@@ -323,6 +323,28 @@ body.capture-protected .auth-gate * { animation-play-state: paused !important; }
 .scene.is-active .birthday-next { animation: reveal 800ms var(--ease) 1280ms forwards; }
 .birthday-next { margin-top: 39px; }
 .reading-content { width: min(100%, 500px); }
+#message-title,
+#birthday-message .letter-copy p,
+#birthday-message .reading-next,
+#personal-note-title,
+#personal-note .personal-copy p,
+#personal-note .reading-next { opacity: 0; }
+#birthday-message.is-active #message-title { animation: reveal 700ms var(--ease) 120ms forwards; }
+#birthday-message.is-active .letter-copy p:nth-child(1) { animation: reveal 650ms var(--ease) 280ms forwards; }
+#birthday-message.is-active .letter-copy p:nth-child(2) { animation: reveal 650ms var(--ease) 480ms forwards; }
+#birthday-message.is-active .letter-copy p:nth-child(3) { animation: reveal 650ms var(--ease) 680ms forwards; }
+#birthday-message.is-active .letter-copy p:nth-child(4) { animation: reveal 650ms var(--ease) 880ms forwards; }
+#birthday-message.is-active .letter-copy p:nth-child(5) { animation: reveal 650ms var(--ease) 1080ms forwards; }
+#birthday-message.is-active .letter-copy p:nth-child(6) { animation: reveal 650ms var(--ease) 1280ms forwards; }
+#birthday-message.is-active .letter-copy p:nth-child(7) { animation: reveal 650ms var(--ease) 1500ms forwards; }
+#birthday-message.is-active .letter-copy p:nth-child(8) { animation: reveal 700ms var(--ease) 1880ms forwards; }
+#birthday-message.is-active .reading-next { animation: reveal 700ms var(--ease) 2180ms forwards; }
+#personal-note.is-active #personal-note-title { animation: reveal 750ms var(--ease) 120ms forwards; }
+#personal-note.is-active .personal-copy p:nth-child(1) { animation: reveal 650ms var(--ease) 360ms forwards; }
+#personal-note.is-active .personal-copy p:nth-child(2) { animation: reveal 700ms var(--ease) 660ms forwards; }
+#personal-note.is-active .personal-copy p:nth-child(3) { animation: reveal 650ms var(--ease) 1040ms forwards; }
+#personal-note.is-active .personal-copy p:nth-child(4) { animation: reveal 650ms var(--ease) 1380ms forwards; }
+#personal-note.is-active .reading-next { animation: reveal 700ms var(--ease) 1740ms forwards; }
 .letter-copy {
   margin-top: 29px;
   color: #c3c1bb;
@@ -520,6 +542,10 @@ body.capture-protected .auth-gate * { animation-play-state: paused !important; }
 @keyframes lyric-next { from { opacity: 0.16; transform: translateY(7px); } to { opacity: 0.36; transform: translateY(0); } }
 @keyframes status-breathe { from { opacity: 0.45; } to { opacity: 1; } }
 @keyframes remnant-reveal { from { opacity: 0; } to { opacity: 1; } }
+@keyframes archive-arrive {
+  from { opacity: 0; transform: translateY(12px) scale(0.97); filter: blur(3px); }
+  to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
 
 @keyframes reveal { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: translateY(0); } }
 
