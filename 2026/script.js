@@ -316,6 +316,7 @@ function restartFromBeginning({ replaceHistory = false } = {}) {
   songLyricPrevious.textContent = "";
   songLyricCurrent.textContent = "";
   songLyricNext.textContent = "";
+  songLyrics.style.setProperty("--lyric-progress", "0");
   songSection.hidden = true;
   songSection.textContent = "";
   songCredit.hidden = true;
@@ -389,9 +390,17 @@ function updateSongLyric(animate = true) {
   const { index: nextIndex, resting } = findActiveLyricIndex();
   songLyrics.classList.toggle("is-resting", resting);
   if (resting) songLyrics.classList.remove("is-changing");
+  const current = nextIndex >= 0 ? lyricEntries[nextIndex] : null;
+  if (current) {
+    const lyricTime = getLyricTimelineTime();
+    const cueDuration = Math.max(Number.EPSILON, current.end - current.start);
+    const progress = Math.min(1, Math.max(0, (lyricTime - current.start) / cueDuration));
+    songLyrics.style.setProperty("--lyric-progress", progress.toFixed(3));
+  } else {
+    songLyrics.style.setProperty("--lyric-progress", "0");
+  }
   if (nextIndex === lyricIndex) return;
   lyricIndex = nextIndex;
-  const current = nextIndex >= 0 ? lyricEntries[nextIndex] : null;
   songLyrics.classList.remove("is-changing");
   if (!animate) void songLyrics.offsetWidth;
   songLyrics.hidden = !current;
