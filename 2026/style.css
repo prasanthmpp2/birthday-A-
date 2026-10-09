@@ -145,6 +145,7 @@ body.capture-protected .auth-gate * { animation-play-state: paused !important; }
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior-y: contain;
+  pointer-events: none;
   opacity: 0;
   visibility: hidden;
   transform: translateY(10px);
@@ -152,7 +153,7 @@ body.capture-protected .auth-gate * { animation-play-state: paused !important; }
   background: radial-gradient(ellipse at 50% 46%, rgb(218 177 126 / 0.035), transparent 48%);
 }
 
-.scene.is-active { opacity: 1; visibility: visible; transform: translateY(0); }
+.scene.is-active { opacity: 1; visibility: visible; transform: translateY(0); pointer-events: auto; }
 
 .scene-content { width: min(100%, 560px); text-align: center; }
 
@@ -550,7 +551,12 @@ body.capture-protected .auth-gate * { animation-play-state: paused !important; }
 @keyframes reveal { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: translateY(0); } }
 
 @media (max-width: 480px) {
-  .scene { padding: 24px; }
+  .scene {
+    padding: max(24px, env(safe-area-inset-top))
+      max(24px, env(safe-area-inset-right))
+      max(24px, env(safe-area-inset-bottom))
+      max(24px, env(safe-area-inset-left));
+  }
   .scene-note { margin-top: 29px; font-size: 0.86rem; }
   .opening-enter { margin-top: 32px; }
   .actions { margin-top: 22px; }
